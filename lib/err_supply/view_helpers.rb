@@ -5,11 +5,17 @@ module ErrSupply
     # triggers a custom event on the associated form element.
     #
     def err_supply(obj, options={})
-      id      = obj.new_record? ? dom_id(obj) : dom_id(obj, :edit)
+      form_css_selector = options[:form_css_selector]
+
+      if form_css_selector.blank?
+        id = obj.new_record? ? dom_id(obj) : dom_id(obj, :edit)
+        form_css_selector = "##{id}"
+      end
+
       prefix  = obj.class.name.underscore.split('/').last
       payload = err_supply_hash(obj, options.merge({ :prefix => prefix }))
 
-      "$('##{ id }').trigger('err_supply:loaded', #{ payload.to_json });".html_safe
+      "$('#{ form_css_selector }').trigger('err_supply:loaded', #{ payload.to_json });".html_safe
     end
 
   end
